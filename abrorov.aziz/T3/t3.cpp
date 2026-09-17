@@ -10,7 +10,7 @@
 #include <functional>
 #include <map>
 
-using namespace std::placeholders; // Для _1, _2 и т.д.
+using namespace std::placeholders;
 
 struct Point {
     int x, y;
@@ -25,12 +25,10 @@ struct Point {
 struct Polygon {
     std::vector<Point> points;
 
-    // Вспомогательные методы для удобства std::bind
     size_t size() const { return points.size(); }
 
     double area() const {
         if (points.size() < 3) return 0.0;
-        // Используем std::accumulate вместо цикла for
         long long sum = std::accumulate(points.begin(), points.end(), 0LL,
             [this, i = 0](long long acc, const Point& a) mutable {
                 const Point& b = points[(i + 1) % points.size()];
@@ -41,7 +39,6 @@ struct Polygon {
     }
 };
 
-// Нормализация фигуры (сдвиг к началу координат и сортировка) без циклов
 std::vector<Point> normalize(const Polygon& p) {
     if (p.points.empty()) return {};
 
@@ -59,7 +56,6 @@ std::vector<Point> normalize(const Polygon& p) {
     return res;
 }
 
-// Парсер строки (цикл здесь допустим, так как это разбор строки, а не обработка контейнера)
 bool parsePolygon(const std::string& s, Polygon& poly) {
     std::istringstream iss(s);
     int n;
@@ -87,7 +83,6 @@ bool parsePolygon(const std::string& s, Polygon& poly) {
     return true;
 }
 
-// --- Отдельные функции для команд ---
 
 void cmdArea(const std::vector<Polygon>& polys, std::istringstream& iss) {
     std::string param;
@@ -98,7 +93,6 @@ void cmdArea(const std::vector<Polygon>& polys, std::istringstream& iss) {
 
     double sum = 0.0;
     if (param == "EVEN") {
-        // Сумма площадей чётных фигур через std::bind
         sum = std::accumulate(polys.begin(), polys.end(), 0.0,
             std::bind(std::plus<double>(), _1,
                 std::bind(std::multiplies<double>(),
@@ -110,7 +104,6 @@ void cmdArea(const std::vector<Polygon>& polys, std::istringstream& iss) {
         );
     }
     else if (param == "ODD") {
-        // Сумма площадей нечётных фигур
         sum = std::accumulate(polys.begin(), polys.end(), 0.0,
             std::bind(std::plus<double>(), _1,
                 std::bind(std::multiplies<double>(),
@@ -131,7 +124,6 @@ void cmdArea(const std::vector<Polygon>& polys, std::istringstream& iss) {
         sum /= polys.size();
     }
     else {
-        // Попытка распарсить число вершин
         try {
             size_t n = std::stoul(param);
             sum = std::accumulate(polys.begin(), polys.end(), 0.0,
@@ -259,9 +251,6 @@ void cmdSame(const std::vector<Polygon>& polys, std::istringstream& iss) {
             std::bind(normalize, _1), normTarget));
     std::cout << cnt << "\n";
 }
-
-// --- Диспетчер команд ---
-
 void processCommands(const std::vector<Polygon>& polys) {
     // Карта команд: строка -> функция-обработчик
     std::map<std::string, std::function<void(const std::vector<Polygon>&, std::istringstream&)>> commands = {
