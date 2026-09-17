@@ -5,6 +5,5 @@
 
 int main()
 {
-    std::cout << "abrorov.aziz\n";
-   
+std::cout << "abrorov.aziz\n";
 }
