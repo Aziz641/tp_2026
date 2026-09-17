@@ -126,6 +126,10 @@ void cmdArea(const std::vector<Polygon>& polys, std::istringstream& iss) {
     else {
         try {
             size_t n = std::stoul(param);
+            if (n < 3) {
+                std::cout << "<INVALID COMMAND>\n";
+                return;
+            }
             sum = std::accumulate(polys.begin(), polys.end(), 0.0,
                 std::bind(std::plus<double>(), _1,
                     std::bind(std::multiplies<double>(),
@@ -212,6 +216,10 @@ void cmdCount(const std::vector<Polygon>& polys, std::istringstream& iss) {
     else {
         try {
             size_t n = std::stoul(param);
+            if (n < 3) {
+                std::cout << "<INVALID COMMAND>\n";
+                return;
+            }
             cnt = std::count_if(polys.begin(), polys.end(),
                 std::bind(std::equal_to<size_t>(), std::bind(&Polygon::size, _1), n));
         }
